@@ -1,25 +1,18 @@
 # bigmomma/urls.py
 from django.contrib import admin
-from django.urls import path, include
-from django.views.generic import TemplateView
-from django.contrib.auth import views as auth_views
-from inventario import views
+from django.urls import path, include  # <-- ¡Asegúrate de que 'include' esté aquí!
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-
-    # auth
-    path("accounts/login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
-    path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
-    path("accounts/login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
-    path("accounts/logout/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
-    # Esto activa todas las URLs de allauth (login, logout, google, etc.)
-    path('accounts/', include('allauth.urls')),
-    # home
-
-    path("accounts/signup/", views.SignUpView.as_view(), name="signup"),
-    # incluye TODAS las rutas del app inventario (mp, kardex, producción, etc.)
-    path("", include(("inventario.urls", "inventario"))),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('admin/', admin.site.urls),
     
+    # --- ¡¡ESTA ES LA ÚNICA LÍNEA QUE NECESITAS!! ---
+    # Le dice a Django: "Deja que 'allauth' maneje TODO
+    # lo que empiece con /accounts/ (login, logout, signup, google, etc.)"
+    path('accounts/', include('allauth.urls')),
+    
+    # --- (BORRAMOS TODAS LAS LÍNEAS ANTIGUAS DE 'accounts/') ---
+    
+    # Esta línea carga todas las URLs de tu app (panel, ventas, etc.)
+    # ¡PERO LA CAMBIAMOS PARA QUE NO INCLUYA 'accounts/'!
+    path('', include('inventario.urls', namespace='inventario')),
 ]

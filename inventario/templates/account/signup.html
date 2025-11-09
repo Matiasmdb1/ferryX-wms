@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% load socialaccount %}
-
 {% block title %}Crear Cuenta{% endblock %}
 {% block content_title %}Crear Cuenta{% endblock %}
 {% block page_title %}Crear Cuenta{% endblock %}
@@ -13,10 +12,7 @@
         <h2 class="text-3xl font-bold text-center text-gray-900">
             Registrarse en Ferryx
         </h2>
-        <p class="text-center text-gray-600 mt-2">
-            Para evitar multicuentas y proteger tu cuenta, usamos el registro seguro de Google.
-        </p>
-
+        
         <div class="mt-8">
           <a href="{% provider_login_url 'google' %}" 
              class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-300">
@@ -24,13 +20,75 @@
             Continuar con Google
           </a>
         </div>
+
+        <div class="flex items-center justify-center my-6">
+          <span class="bg-gray-300 h-px flex-grow"></span>
+          <span class="px-4 text-sm text-gray-500">O regístrate con tu email</span>
+          <span class="bg-gray-300 h-px flex-grow"></span>
+        </div>
+
+        <form method="post" class="space-y-4" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+              <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md" role="alert">
+                {% for error in form.non_field_errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div>
+              <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                Correo Electrónico
+              </label>
+              <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}"
+                     required
+                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-panaderia focus:border-panaderia sm:text-sm">
+              {% for error in form.email.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+              {% endfor %}
+            </div>
+
+            <div>
+              <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                Contraseña
+              </label>
+              <input type="password" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}"
+                     required
+                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-panaderia focus:border-panaderia sm:text-sm">
+              {% for error in form.password.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+              {% endfor %}
+            </div>
+
+            <div>
+              <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                Confirmar Contraseña
+              </label>
+              <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}"
+                     required
+                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-panaderia focus:border-panaderia sm:text-sm">
+              {% for error in form.password2.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+              {% endfor %}
+            </div>
+
+            
+            <div class="mt-6">
+                <button type="submit" 
+                   class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-tema-principal hover:bg-tema-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition duration-300">
+                   Crear Cuenta
+                </button>
+            </div>
+        </form>
         <p class="mt-6 text-center text-sm text-gray-600">
             ¿Ya tienes cuenta?
-            <a href="{% url 'login' %}" class="font-medium text-tema-principal hover:underline">
+            <a href="{% url 'account_login' %}" class="font-medium text-tema-principal hover:underline">
                 Ingresa aquí
             </a>
         </p>
 
     </div>
 
-    {% endblock %}
+{% endblock %}

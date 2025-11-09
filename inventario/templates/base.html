@@ -14,10 +14,10 @@
           colors: {
             panaderia: '#fbbf24',
             
-            /* --- Colores del tema PRO (Azul) --- */
+            /* --- Colores del tema PRO (Tus colores) --- */
             pro: {
-              DEFAULT: '#3bf680ff', /* blue-500 */
-              'hover': '#eb2532ff', /* blue-600 */
+              DEFAULT: '#3bf680ff', 
+              'hover': '#eb2532ff', 
             }
           },
         },
@@ -36,8 +36,6 @@
   </script>
 
   <style>
-    /* --- TRADUCTOR DE TEMAS --- */
-
     /* 1. TEMA ESENCIAL (PYME) - Amarillo */
     .theme-esencial .bg-tema-header     { background-color: white; }
     .theme-esencial .text-tema-header     { color: #1f2937; } /* gray-800 */
@@ -47,13 +45,13 @@
     .theme-esencial .hover\:bg-tema-hover:hover { background-color: #f59e0b; } /* yellow-500 */
     .theme-esencial .border-tema-borde    { border-color: #e5e7eb; } /* gray-200 */
 
-    /* 2. TEMA PRO (TRAZABILIDAD / MULTI-SUCURSAL) - Azul Oscuro */
+    /* 2. TEMA PRO (Tus colores) */
     .theme-pro .bg-tema-header     { background-color: #1f2937; } /* gray-800 */
     .theme-pro .text-tema-header     { color: white; }
-    .theme-pro .text-tema-principal  { color: #e40808ff; } /* pro.DEFAULT (azul) */
-    .theme-pro .text-tema-secundario { color: #110f0fff; } /* gray-300 */
-    .theme-pro .bg-tema-principal    { background-color: #3B82F6; } /* pro.DEFAULT (azul) */
-    .theme-pro .hover\:bg-tema-hover:hover { background-color: #2563EB; } /* pro.hover (azul oscuro) */
+    .theme-pro .text-tema-principal  { color: #e40808ff; } /* Tu color rojo */
+    .theme-pro .text-tema-secundario { color: #110f0fff; } /* Tu color negro */
+    .theme-pro .bg-tema-principal    { background-color: #3bf680ff; } /* Tu color verde */
+    .theme-pro .hover\:bg-tema-hover:hover { background-color: #eb2532ff; } /* Tu color rojo hover */
     .theme-pro .border-tema-borde    { border-color: #4b5563; } /* gray-600 */
   </style>
 
@@ -72,7 +70,7 @@
       
       <a href="{% url 'inventario:panel' %}" class="flex items-center text-xl font-bold text-tema-principal">
        <img src="{% static 'ferryx.png' %}" alt="FERRYX Logo" class="h-28 w-28 mr-1">
-        <span>FERRYX</span>
+       <span>FERRYX</span>
       </a>
       {% if user.is_authenticated %}
       <nav class="hidden md:flex flex-wrap gap-3">
@@ -107,7 +105,7 @@
           <a href="{% url 'inventario:predict' %}" class="hover:text-tema-principal">IA Predictiva</a>
         {% endif %}
 
-      </nav>
+        </nav>
       {% endif %}
 
       <div class="md:hidden">
@@ -116,14 +114,15 @@
       <div class="flex items-center gap-3 ml-4">
         {% if user.is_authenticated %}
           <span class="text-sm text-tema-secundario">{{ user.username }}</span>
-          <form method="post" action="{% url 'logout' %}" class="inline">
+          
+          <form method="post" action="{% url 'account_logout' %}" class="inline">
             {% csrf_token %}
             <button type="submit" class="bg-tema-principal text-white px-3 py-1 rounded-md hover:bg-tema-hover">
               Salir
             </button>
           </form>
         {% else %}
-          <a href="{% url 'login' %}" class="bg-tema-principal text-white px-3 py-1 rounded-md hover:bg-tema-hover">Entrar</a>
+          <a href="{% url 'account_login' %}" class="bg-tema-principal text-white px-3 py-1 rounded-md hover:bg-tema-hover">Entrar</a>
         {% endif %}
       </div>
     </div>
@@ -158,7 +157,7 @@
         <a href="{% url 'inventario:predict' %}" class="block py-1 hover:text-tema-principal">IA Predictiva</a>
       {% endif %}
     
-    </div>
+      </div>
     {% endif %}
 
     <div class="bg-gray-50 border-t text-center py-2">
