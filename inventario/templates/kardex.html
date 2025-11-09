@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+  <h1 class="text-2xl font-bold text-gray-800">📦 Kardex de Materias Primas</h1>
+  <span class="text-sm text-gray-500">Últimos 200 movimientos</span>
+</div>
+
+<div class="hidden md:block overflow-x-auto bg-white shadow rounded-2xl border border-gray-200">
+  <table class="min-w-full text-sm text-gray-700 table-auto">
+    <thead class="bg-panaderia text-white uppercase text-xs">
+      <tr>
+        <th class="py-3 px-4 text-left">Fecha</th>
+        <th class="py-3 px-4 text-left">Materia Prima</th>
+        <th class="py-3 px-4 text-left">Tipo</th>
+        <th class="py-3 px-4 text-right">Cantidad</th>
+        <th class="py-3 px-4 text-left">Usuario</th>
+        <th class="py-3 px-4 text-left">Nota</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in movs %}
+        <tr class="border-b hover:bg-gray-50 transition">
+          <td class="py-3 px-4 whitespace-nowrap text-gray-600">{{ m.fecha|date:"d-m-Y H:i" }}</td>
+          <td class="py-3 px-4">{{ m.mp.nombre }}</td>
+          <td class="py-3 px-4 font-semibold">
+            {% if m.tipo == "INGRESO" %}
+              <span class="text-green-600">Ingreso</span>
+            {% elif m.tipo == "CONSUMO" %}
+              <span class="text-blue-600">Consumo</span>
+            {% elif m.tipo == "MERMA" %}
+              <span class="text-red-600">Merma</span>
+            {% elif m.tipo == "AJUSTE_POS" %}
+              <span class="text-emerald-600">Ajuste (+)</span>
+            {% else %}
+              <span class="text-orange-600">Ajuste (−)</span>
+            {% endif %}
+          </td>
+          <td class="py-3 px-4 text-right font-mono">{{ m.cantidad_signed|floatformat:"-1" }}</td>
+          <td class="py-3 px-4">{{ m.created_by|default:"—" }}</td>
+          <td class="py-3 px-4 text-gray-500">{{ m.nota|default:"—" }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" class="py-6 text-center text-gray-500 italic">Sin movimientos registrados.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="block md:hidden space-y-3">
+  {% for m in movs %}
+  <div class="bg-white shadow rounded-2xl border border-gray-200 p-4">
+    
+    <div class="flex justify-between items-center mb-2 pb-2 border-b">
+      <span class="font-bold text-lg">{{ m.mp.nombre }}</span>
+      <span class="font-mono font-bold text-lg">
+        {{ m.cantidad_signed|floatformat:"-1" }}
+      </span>
+    </div>
+    
+    <div class="flex justify-between items-center text-sm mb-2">
+      <span class="font-semibold">
+        {% if m.tipo == "INGRESO" %}
+          <span class="text-green-600">Ingreso</span>
+        {% elif m.tipo == "CONSUMO" %}
+          <span class="text-blue-600">Consumo</span>
+        {% elif m.tipo == "MERMA" %}
+          <span class="text-red-600">Merma</span>
+        {% elif m.tipo == "AJUSTE_POS" %}
+          <span class="text-emerald-600">Ajuste (+)</span>
+        {% else %}
+          <span class="text-orange-600">Ajuste (−)</span>
+        {% endif %}
+      </span>
+      <span class="text-gray-500">{{ m.fecha|date:"d-m-Y H:i" }}</span>
+    </div>
+
+    <div class="text-sm text-gray-600">
+      <p><strong>Nota:</strong> {{ m.nota|default:"—" }}</p>
+      <p><strong>Usuario:</strong> {{ m.created_by|default:"—" }}</p>
+    </div>
+  </div>
+  {% empty %}
+    <div class="bg-white shadow rounded-2xl p-6 text-center text-gray-500 italic">
+      Sin movimientos registrados.
+    </div>
+  {% endfor %}
+</div>
+
+
+<div class="mt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+  <div class="text-gray-600 text-sm">
+    Mostrando <strong>{{ movs|length }}</strong> movimientos recientes.
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <a href="{% url 'inventario:mp_list' %}" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium">Ver Materias Primas</a>
+    <a href="{% url 'inventario:kardex' %}" class="px-4 py-2 bg-panaderia text-white hover:bg-yellow-500 rounded-lg text-sm font-medium">Actualizar</a>
+  </div>
+</div>
+
+{% endblock %}

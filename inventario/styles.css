@@ -1,0 +1,103 @@
+/* --- Base --- */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f9fafb;
+  color: #111827;
+  transition: background 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* --- Header --- */
+.header {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: bold;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.nav a, .link {
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.9rem;
+}
+
+.user {
+  opacity: 0.7;
+}
+
+.theme-btn {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  background: transparent;
+}
+
+/* --- Tablas --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background: #f3f4f6;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* --- Dark mode --- */
+.dark body {
+  background: #111827;
+  color: #f3f4f6;
+}
+
+.dark .header {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark table {
+  background: #1f2937;
+}
+
+.dark thead {
+  background: #374151;
+}
+
+.dark th, .dark td {
+  border-color: #4b5563;
+}
+
+.dark .theme-btn {
+  border-color: #555;
+  color: #f3f4f6;
+}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Detalle OP #{{ op.id }}{% endblock %}
+
+{% block content %}
+<h1 class="text-xl font-bold mb-3">Orden de Producción {{ op }}</h1>
+
+<div class="mb-4 text-sm text-gray-700">
+  <div><span class="font-semibold">Producto:</span> {{ op.producto }}</div>
+  <div><span class="font-semibold">Lotes (kg a producir):</span> {{ op.lotes|floatformat:"-1" }}</div>
+  <div><span class="font-semibold">Unidades totales:</span> {{ op.unidades_totales_fmt }}</div>
+  <div><span class="font-semibold">Fecha:</span> {{ op.fecha|date:"Y-m-d H:i" }}</div>
+  <div><span class="font-semibold">Estado:</span> {{ op.get_estado_display }}</div>
+  {% if op.nota %}<div><span class="font-semibold">Nota:</span> {{ op.nota }}</div>{% endif %}
+</div>
+
+<h2 class="font-semibold mb-2">Detalle de receta</h2>
+<table class="w-full bg-white rounded-2xl shadow overflow-hidden">
+  <thead class="bg-gray-100 text-left">
+    <tr>
+      <th class="p-3">MP</th>
+      <th class="p-3">Por lote</th>
+      <th class="p-3">Total consumido</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in op.detalle_consumo %}
+      <tr class="border-t">
+        <td class="p-3">{{ row.mp }}</td>
+        <td class="p-3 tabular-nums text-right">{{ row.por_lote }}</td>
+        <td class="p-3 tabular-nums text-right">{{ row.total_fmt }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'inventario:op_list' %}" class="inline-block mt-4 px-3 py-2 border rounded-xl">Volver</a>
+{% endblock %}

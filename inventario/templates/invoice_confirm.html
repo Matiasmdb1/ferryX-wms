@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Confirmar Ingreso de Factura</h1>
+<p class="text-sm text-gray-600 mb-4">
+  Hemos leído la factura. Por favor, verifica que los productos y cantidades 
+  coincidan con tus Materias Primas antes de guardar.
+</p>
+
+<form method="post" action="{% url 'inventario:guardar_ingreso_factura' %}" class="bg-white p-6 rounded-lg shadow space-y-4">
+  {% csrf_token %}
+  
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-3 text-left">Texto en Factura</th>
+          <th class="px-4 py-3 text-left">Tu Materia Prima (Sugerida)</th>
+          <th class="px-4 py-3 text-left">Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items_a_confirmar %}
+        <tr class="border-b">
+          
+          <td class="px-4 py-3">
+            {{ item.azure_desc }}
+            <input type="hidden" name="item-{{ forloop.counter0 }}-azure_desc" value="{{ item.azure_desc }}">
+          </td>
+          
+          <td class="px-4 py-3">
+            <select name="item-{{ forloop.counter0 }}-mp" class="w-full border-gray-300 rounded-md shadow-sm">
+              <option value="">--- Ignorar este item ---</option>
+              {% for mp in todas_las_mps %}
+                <option value="{{ mp.id }}" {% if mp.id == item.sugerencia_id %}selected{% endif %}>
+                  {{ mp.nombre }}
+                </option>
+              {% endfor %}
+            </select>
+          </td>
+          
+          <td class="px-4 py-3">
+            <input 
+              type="number" 
+              step="any"
+              name="item-{{ forloop.counter0 }}-qty" 
+              value="{{ item.azure_qty|floatformat }}" 
+              class="w-24 border-gray-300 rounded-md shadow-sm">
+          </td>
+        
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <input type="hidden" name="item_count" value="{{ items_a_confirmar|length }}">
+  
+  <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+    Confirmar y Guardar Ingreso de Stock
+  </button>
+  
+</form>
+{% endblock %}

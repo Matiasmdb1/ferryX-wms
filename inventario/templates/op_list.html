@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="flex justify-between items-center mb-4">
+  <h1 class="text-xl font-bold">Órdenes de Producción</h1>
+
+  <div class="flex items-center gap-2">
+    <!-- Botones para navegar al “árbol” de Recetas -->
+    <a class="px-3 py-2 border rounded-xl hover:bg-gray-50"
+       href="{% url 'inventario:receta_list' %}">
+      Ver Recetas
+    </a>
+    {% if perms.inventario.add_receta %}
+    <a class="px-3 py-2 border rounded-xl hover:bg-gray-50"
+       href="{% url 'inventario:receta_create' %}">
+      Nueva Receta
+    </a>
+    {% endif %}
+
+    <!-- Botón existente de Nueva OP -->
+    {% if perms.inventario.add_ordenproduccion %}
+    <a class="px-3 py-2 border rounded-xl bg-gray-900 text-white hover:opacity-90"
+       href="{% url 'inventario:op_create' %}">
+      Nueva OP
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<table class="w-full bg-white rounded-2xl shadow overflow-hidden">
+  <thead class="bg-gray-100 text-left">
+    <tr>
+      <th class="p-3">#</th>
+      <th class="p-3">Producto</th>
+      <th class="p-3">Lotes</th>
+      <th class="p-3">Estado</th>
+      <th class="p-3">Unidades</th>
+      <th class="p-3">Fecha</th>
+      <th class="p-3">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for o in ops %}
+      <tr class="border-t">
+        <td class="p-3">
+          <a class="underline" href="{% url 'inventario:op_detail' o.pk %}">OP {{ o.id }}</a>
+        </td>
+        <td class="p-3">{{ o.producto }}</td>
+        <td class="p-3 tabular-nums text-right">{{ o.lotes|floatformat:"-1" }}</td>
+        <td class="p-3">{{ o.get_estado_display }}</td>
+        <td class="p-3 tabular-nums text-right">{{ o.unidades_totales_fmt }}</td>
+        <td class="p-3">{{ o.fecha|date:"d-m-Y H:i" }}</td>
+        <td class="p-3">
+          <!-- Atajo: ver recetas relacionadas al producto de esta OP -->
+          <a class="text-blue-600 underline"
+             href="{% url 'inventario:receta_list' %}?q={{ o.producto.nombre|urlencode }}">
+             Recetas de {{ o.producto.nombre }}
+          </a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td class="p-3" colspan="7">Sin órdenes</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

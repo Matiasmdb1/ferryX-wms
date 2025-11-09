@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8">
+
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">
+        {{ titulo }}
+      </h1>
+      <p class="text-lg text-gray-600 mt-2">
+        {{ texto_ayuda }}
+      </p>
+    </div>
+    
+    <a href="{{ url_crear }}" 
+       class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 shadow-sm">
+       Añadir Nuevo (+)
+    </a>
+  </div>
+
+  <hr class="my-4">
+
+  <div>
+    <h3 class="text-lg font-semibold text-gray-800 mb-3">
+      Ya tienes {{ lista_objetos.count }} creados:
+    </h3>
+    
+    <div class="border border-gray-200 rounded-lg">
+      <ul class="divide-y divide-gray-200">
+        {% for item in lista_objetos %}
+          <li class="py-3 px-4 flex justify-between items-center">
+            <span class="text-gray-700">{{ item }}</span>
+          </li>
+        {% empty %}
+          <li class="py-3 px-4 text-gray-500 italic">
+            Aún no has añadido nada.
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="flex justify-between items-center border-t pt-6 mt-6">
+    
+    {% if url_anterior %}
+      <a href="{{ url_anterior }}" class="text-gray-600 hover:text-gray-800">
+        &larr; Volver (Anterior)
+      </a>
+    {% else %}
+      <span></span> {% endif %}
+    
+    {% if lista_objetos.count > 0 %}
+      <a href="{{ url_siguiente }}" 
+         class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 shadow-md">
+         Siguiente Paso &raquo;
+      </a>
+    {% else %}
+      <span 
+         class="inline-block bg-gray-300 text-gray-500 font-bold py-3 px-6 rounded-lg text-lg"
+         title="Debes crear al menos un ítem para continuar">
+         Siguiente Paso &raquo;
+      </span>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

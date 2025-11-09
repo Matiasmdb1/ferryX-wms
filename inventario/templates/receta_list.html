@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Recetas</h1>
+
+<form method="get" class="mb-3">
+  <input type="text" name="q" placeholder="Buscar por producto o nombre…" value="{{ request.GET.q }}">
+  <button type="submit">Buscar</button>
+  <a href="{% url 'inventario:receta_create' %}">+ Nueva receta</a>
+</form>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Producto</th>
+    <th>Nombre</th>
+    <th>Versión</th>
+    <th>Rendimiento/Lote</th>
+    <th>Activo</th>
+    <th>Acciones</th>
+  </tr>
+  {% for r in recetas %}
+  <tr>
+    <td>{{ r.producto.nombre }}</td>
+    <td>{{ r.nombre }}</td>
+    <td>{{ r.version }}</td>
+    <td>{{ r.rendimiento_por_lote }}</td>
+    <td>{{ r.activo|yesno:"Sí,No" }}</td>
+    <td>
+      <a href="{% url 'inventario:receta_detail' r.pk %}">Ver</a> |
+      <a href="{% url 'inventario:receta_update' r.pk %}">Editar</a>
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6">No hay recetas.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

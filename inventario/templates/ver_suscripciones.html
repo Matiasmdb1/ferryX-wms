@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Mi Cuenta y Suscripción</h1>
+    
+    <p>Empresa: {{ suscripcion.nombre_empresa }}</p>
+    
+    <h3>Plan Actual: <strong>{{ suscripcion.get_plan_actual_display }}</strong></h3>
+    <h3>Estado: <strong>{{ suscripcion.subscription_status|title }}</strong></h3>
+
+    <br>
+    <p>Para simular un cambio de plan, vuelve a la página de precios:</p>
+    <a href="{% url 'inventario:pagina_precios' %}" class="btn-principal">Ver otros Planes</a>
+{% endblock %}

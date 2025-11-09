@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    Nuestros Planes
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900">
+                Planes Ferryx
+            </h1>
+            <p class="text-xl text-gray-600 mt-4">
+                Elige el plan que se adapta al tamaño de tu empresa.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <div class="bg-white rounded-lg shadow-lg p-8 flex flex-col">
+                <h2 class="text-2xl font-bold text-gray-900 text-center">Esencial (PYME)</h2>
+                <p class="text-center text-gray-500 mt-2 mb-6">Empresas pequeñas que inician su digitalización.</p>
+
+                <ul class="space-y-4 text-gray-700 flex-grow">
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        3 usuarios
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        <strong>1 Bodega y 1 Ubicación</strong>
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        Inventario (Recetas, Lotes, OPs, Ventas)
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        Dashboard Básico
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-red-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                        Reportes de Trazabilidad
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-red-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                        IA: Escaneo de Facturas
+                    </li>
+                </ul>
+
+                <div class="mt-8">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'inventario:simular_suscripcion' 'esencial' %}" class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg text-center transition duration-300">
+                            Suscribirse
+                        </a>
+                    {% else %}
+                        <a href="{% url 'signup' %}?plan=esencial" class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg text-center transition duration-300">
+                            Registrarse
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-2xl p-8 flex flex-col border-2 border-yellow-500 relative">
+                <span class="absolute top-0 -mt-3 bg-yellow-500 text-white text-sm font-bold px-3 py-1 rounded-full shadow-md mx-auto left-0 right-0 w-max">
+                    Más Popular
+                </span>
+                
+                <h2 class="text-2xl font-bold text-gray-900 text-center">Trazabilidad (Pro)</h2>
+                <p class="text-center text-gray-500 mt-2 mb-6">PYMEs que necesitan orden en su bodega, como "Big Momma".</p>
+
+                <ul class="space-y-4 text-gray-700 flex-grow">
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        10 usuarios
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        Todo lo de Esencial
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        <strong>1 Bodega, Múltiples Ubicaciones</strong>
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        OPs ilimitadas
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        Dashboard Avanzado
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        <strong>Reportes de Trazabilidad</strong>
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        IA: Escaneo (100 facturas/mes)
+                    </li>
+                </ul>
+
+                <div class="mt-8">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'inventario:simular_suscripcion' 'trazabilidad' %}" class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg text-lg text-center transition duration-300 shadow-md">
+                            Suscribirse al Plan Trazabilidad
+                        </a>
+                    {% else %}
+                        <a href="{% url 'signup' %}?plan=trazabilidad" class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg text-lg text-center transition duration-300 shadow-md">
+                            Registrarse para Obtener Plan Pro
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-8 flex flex-col">
+                <h2 class="text-2xl font-bold text-gray-900 text-center">Multi-Sucursal</h2>
+                <p class="text-center text-gray-500 mt-2 mb-6">Panaderías grandes con múltiples locales.</p>
+
+                <ul class="space-y-4 text-gray-700 flex-grow">
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        Usuarios ilimitados
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        Todo lo de Trazabilidad
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        <strong>Múltiples Bodegas y Ubicaciones</strong>
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        Transferencias entre bodegas
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        IA: Escaneo (ilimitado)
+                    </li>
+                </ul>
+
+                <div class="mt-8">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'inventario:simular_suscripcion' 'multi_sucursal' %}" class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg text-center transition duration-300">
+                            Suscribirse
+                        </a>
+                    {% else %}
+                        <a href="{% url 'signup' %}?plan=multi_sucursal" class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg text-center transition duration-300">
+                            Registrarse
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

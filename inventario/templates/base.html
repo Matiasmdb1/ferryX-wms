@@ -1,0 +1,185 @@
+{% load static %}
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Intranet{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            panaderia: '#fbbf24',
+            
+            /* --- Colores del tema PRO (Azul) --- */
+            pro: {
+              DEFAULT: '#3bf680ff', /* blue-500 */
+              'hover': '#eb2532ff', /* blue-600 */
+            }
+          },
+        },
+      },
+    }
+  </script>
+  <script>
+    function setFontSize(size) {
+      document.documentElement.style.fontSize = size + '%';
+      localStorage.setItem('fontSize', size);
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('fontSize') || 100;
+      document.documentElement.style.fontSize = saved + '%';
+    });
+  </script>
+
+  <style>
+    /* --- TRADUCTOR DE TEMAS --- */
+
+    /* 1. TEMA ESENCIAL (PYME) - Amarillo */
+    .theme-esencial .bg-tema-header     { background-color: white; }
+    .theme-esencial .text-tema-header     { color: #1f2937; } /* gray-800 */
+    .theme-esencial .text-tema-principal  { color: #fbbf24; } /* panaderia */
+    .theme-esencial .text-tema-secundario { color: #374151; } /* gray-700 */
+    .theme-esencial .bg-tema-principal    { background-color: #fbbf24; } /* panaderia */
+    .theme-esencial .hover\:bg-tema-hover:hover { background-color: #f59e0b; } /* yellow-500 */
+    .theme-esencial .border-tema-borde    { border-color: #e5e7eb; } /* gray-200 */
+
+    /* 2. TEMA PRO (TRAZABILIDAD / MULTI-SUCURSAL) - Azul Oscuro */
+    .theme-pro .bg-tema-header     { background-color: #1f2937; } /* gray-800 */
+    .theme-pro .text-tema-header     { color: white; }
+    .theme-pro .text-tema-principal  { color: #e40808ff; } /* pro.DEFAULT (azul) */
+    .theme-pro .text-tema-secundario { color: #110f0fff; } /* gray-300 */
+    .theme-pro .bg-tema-principal    { background-color: #3B82F6; } /* pro.DEFAULT (azul) */
+    .theme-pro .hover\:bg-tema-hover:hover { background-color: #2563EB; } /* pro.hover (azul oscuro) */
+    .theme-pro .border-tema-borde    { border-color: #4b5563; } /* gray-600 */
+  </style>
+
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col
+             {% if user.is_authenticated and request.user.suscripcion and request.user.suscripcion.plan_actual != 'esencial' %}
+               theme-pro
+             {% else %}
+               theme-esencial
+             {% endif %}
+            ">
+
+  <header class="bg-tema-header text-tema-header shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+      
+      <a href="{% url 'inventario:panel' %}" class="flex items-center text-xl font-bold text-tema-principal">
+       <img src="{% static 'ferryx.png' %}" alt="FERRYX Logo" class="h-28 w-28 mr-1">
+        <span>FERRYX</span>
+      </a>
+      {% if user.is_authenticated %}
+      <nav class="hidden md:flex flex-wrap gap-3">
+        
+        <a href="{% url 'inventario:panel' %}" class="hover:text-tema-principal">Panel</a>
+        
+        {% if perms.inventario.view_sucursal and request.user.suscripcion.plan_actual == 'multi_sucursal' %}
+          <a href="{% url 'inventario:sucursal_list' %}" class="hover:text-tema-principal">Bodegas</a>
+        {% endif %}
+
+        {% if perms.inventario.view_ubicacion and request.user.suscripcion.plan_actual != 'esencial' %}
+          <a href="{% url 'inventario:ubicacion_list' %}" class="hover:text-tema-principal">Ubicaciones</a>
+        {% endif %}
+        
+        {% if perms.inventario.view_materiaprima %}
+          <a href="{% url 'inventario:mp_list' %}" class="hover:text-tema-principal">Materias primas</a>
+        {% endif %}
+        {% if perms.inventario.view_movimientomp %}
+          <a href="{% url 'inventario:kardex' %}" class="hover:text-tema-principal">Kardex</a>
+        {% endif %}
+        {% if perms.inventario.view_ordenproduccion %}
+          <a href="{% url 'inventario:op_list' %}" class="hover:text-tema-principal">Producción</a>
+        {% endif %}
+        {% if perms.inventario.view_loteproducto %}
+          <a href="{% url 'inventario:lote_list' %}" class="hover:text-tema-principal">Lotes</a>
+        {% endif %}
+        {% if perms.inventario.view_venta %}
+          <a href="{% url 'inventario:venta_list' %}" class="hover:text-tema-principal">Ventas</a>
+        {% endif %}
+        
+        {% if perms.inventario.can_run_predictions and request.user.suscripcion.plan_actual != 'esencial' %}
+          <a href="{% url 'inventario:predict' %}" class="hover:text-tema-principal">IA Predictiva</a>
+        {% endif %}
+
+      </nav>
+      {% endif %}
+
+      <div class="md:hidden">
+        <button id="menu-btn" class="text-tema-principal focus:outline-none">☰</button>
+      </div>
+      <div class="flex items-center gap-3 ml-4">
+        {% if user.is_authenticated %}
+          <span class="text-sm text-tema-secundario">{{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="bg-tema-principal text-white px-3 py-1 rounded-md hover:bg-tema-hover">
+              Salir
+            </button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="bg-tema-principal text-white px-3 py-1 rounded-md hover:bg-tema-hover">Entrar</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div id="mobile-menu" class="hidden md:hidden bg-tema-header border-t border-tema-borde p-4">
+      
+      <a href="{% url 'inventario:panel' %}" class="block py-1 hover:text-tema-principal">Panel</a>
+      
+      {% if perms.inventario.view_sucursal and request.user.suscripcion.plan_actual == 'multi_sucursal' %}
+        <a href="{% url 'inventario:sucursal_list' %}" class="block py-1 hover:text-tema-principal">Bodegas</a>
+      {% endif %}
+      {% if perms.inventario.view_ubicacion and request.user.suscripcion.plan_actual != 'esencial' %}
+        <a href="{% url 'inventario:ubicacion_list' %}" class="block py-1 hover:text-tema-principal">Ubicaciones</a>
+      {% endif %}
+      {% if perms.inventario.view_materiaprima %}
+        <a href="{% url 'inventario:mp_list' %}" class="block py-1 hover:text-tema-principal">Materias primas</a>
+      {% endif %}
+      {% if perms.inventario.view_movimientomp %}
+        <a href="{% url 'inventario:kardex' %}" class="block py-1 hover:text-tema-principal">Kardex</a>
+      {% endif %}
+      {% if perms.inventario.view_ordenproduccion %}
+        <a href="{% url 'inventario:op_list' %}" class="block py-1 hover:text-tema-principal">Producción</a>
+      {% endif %}
+      {% if perms.inventario.view_loteproducto %}
+        <a href="{% url 'inventario:lote_list' %}" class="block py-1 hover:text-tema-principal">Lotes</a>
+      {% endif %}
+      {% if perms.inventario.view_venta %}
+        <a href="{% url 'inventario:venta_list' %}" class="block py-1 hover:text-tema-principal">Ventas</a>
+      {% endif %}
+      {% if perms.inventario.can_run_predictions and request.user.suscripcion.plan_actual != 'esencial' %}
+        <a href="{% url 'inventario:predict' %}" class="block py-1 hover:text-tema-principal">IA Predictiva</a>
+      {% endif %}
+    
+    </div>
+    {% endif %}
+
+    <div class="bg-gray-50 border-t text-center py-2">
+       </div>
+  </header>
+
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 w-full">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer class="bg-white border-t text-center py-3 mt-6 text-sm text-gray-600">
+    © {% now "Y" %} Panadería - Sistema de Gestión ERP
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

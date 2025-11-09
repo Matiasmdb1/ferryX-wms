@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load socialaccount %}
+{% load form_filters %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center min-h-[70vh]">
+  <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
+    <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">🔐 Ingresar al sistema</h1>
+
+    <div class="mb-4">
+      <a href="{% provider_login_url 'google' %}" 
+         class="flex items-center justify-center w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+        <img class="h-6 w-6 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo">
+        Continuar con Google
+      </a>
+    </div>
+    
+    <div class="flex items-center justify-center my-4">
+      <span class="bg-gray-300 h-px flex-grow"></span>
+      <span class="px-4 text-sm text-gray-500">O inicia sesión con tu usuario</span>
+      <span class="bg-gray-300 h-px flex-grow"></span>
+    </div>
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md" role="alert">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div>
+        <label for="{{ form.login.id_for_label }}" class="block text-sm font-medium text-gray-700">Email</label>
+        {{ form.login|add_class:"mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-panaderia focus:border-panaderia sm:text-sm" }}
+        {% for error in form.login.errors %}
+          <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div>
+        <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">Contraseña</label>
+        {{ form.password|add_class:"mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-panaderia focus:border-panaderia sm:text-sm" }}
+        {% for error in form.password.errors %}
+          <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <button type="submit"
+        class="w-full py-2.5 bg-tema-principal hover:bg-tema-hover text-white font-semibold rounded-xl shadow-sm transition">
+        Entrar
+      </button>
+    </form>
+    <p class="text-center text-sm text-gray-500 mt-6">
+      ¿Aún no tienes cuenta? <a href="{% url 'signup' %}" class="font-medium text-tema-principal hover:underline">Regístrate aquí</a>.
+    </p>
+
+  </div>
+</div>
+
+{% endblock %}

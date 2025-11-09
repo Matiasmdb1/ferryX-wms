@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-2">📊 Dashboard</h1>
+<p class="opacity-70">Bienvenido, {{ user.username }}. Aquí tienes un resumen rápido de tu inventario y producción.</p>
+
+<!-- 1️⃣ KPIs -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+  <div class="bg-white shadow rounded-2xl p-5 flex flex-col items-center">
+    <div class="text-3xl font-bold">{{ total_mps }}</div>
+    <div class="text-gray-500 mt-1 text-center">Materias primas en stock</div>
+  </div>
+  <div class="bg-white shadow rounded-2xl p-5 flex flex-col items-center">
+    <div class="text-3xl font-bold">{{ lotes_por_vencer|length }}</div>
+    <div class="text-gray-500 mt-1 text-center">Lotes próximos a vencer</div>
+  </div>
+  <div class="bg-white shadow rounded-2xl p-5 flex flex-col items-center">
+    <div class="text-3xl font-bold">{{ total_ventas_hoy }}</div>
+    <div class="text-gray-500 mt-1 text-center">Ventas hoy</div>
+  </div>
+  <div class="bg-white shadow rounded-2xl p-5 flex flex-col items-center">
+    <div class="text-3xl font-bold">{{ total_mermas_hoy }}</div>
+    <div class="text-gray-500 mt-1 text-center">Mermas de MP</div>
+  </div>
+</div>
+
+<!-- 2️⃣ Accesos rápidos -->
+<h2 class="text-xl font-semibold mt-8 mb-4">🚀 Accesos rápidos</h2>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+  <a href="{% url 'inventario:mp_list' %}" class="bg-panaderia hover:bg-yellow-500 text-white py-4 rounded-xl text-center font-medium transition">Materias Primas</a>
+  <a href="{% url 'inventario:kardex' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-xl text-center font-medium transition">Kardex</a>
+  <a href="{% url 'inventario:lote_list' %}" class="bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl text-center font-medium transition">Lotes</a>
+  <a href="{% url 'inventario:venta_list' %}" class="bg-purple-500 hover:bg-purple-600 text-white py-4 rounded-xl text-center font-medium transition">Ventas</a>
+  <a href="{% url 'inventario:op_list' %}" class="bg-indigo-500 hover:bg-indigo-600 text-white py-4 rounded-xl text-center font-medium transition">Producción</a>
+  <a href="{% url 'inventario:predict' %}" class="bg-pink-500 hover:bg-pink-600 text-white py-4 rounded-xl text-center font-medium transition">IA Predictiva</a>
+</div>
+
+<!-- 3️⃣ Alertas -->
+<h2 class="text-xl font-semibold mt-8 mb-4">⚠️ Alertas recientes</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+    <h3 class="font-semibold text-red-600 mb-2">Lotes próximos a vencer</h3>
+    <ul class="list-disc list-inside text-red-700 text-sm">
+      {% for lote in lotes_por_vencer %}
+        <li>{{ lote.codigo }} - {{ lote.producto }} ({{ lote.cantidad_disponible_fmt }})</li>
+      {% empty %}
+        <li>No hay lotes próximos a vencer.</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+    <h3 class="font-semibold text-yellow-600 mb-2">MP bajo stock mínimo</h3>
+    <ul class="list-disc list-inside text-yellow-700 text-sm">
+      {% for mp in mp_alertas %}
+        <li>{{ mp.nombre }} - actual: {{ mp.stock_calc|floatformat:"-1" }} (mínimo: {{ mp.stock_minimo_fmt }})</li>
+      {% empty %}
+        <li>Todos los stocks están dentro de niveles seguros.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% endblock %}

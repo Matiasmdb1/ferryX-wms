@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Ventas{% endblock %}
+
+{% block content %}
+<!-- Header: Título y botón principal -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+  <h1 class="text-3xl font-bold text-gray-800">🛒 Historial de Ventas</h1>
+  {% if perms.inventario.add_venta %}
+    <a href="{% url 'inventario:venta_create' %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow-sm">
+      + Registrar Nueva Venta
+    </a>
+  {% endif %}
+</div>
+
+<!-- Barra de Búsqueda y Filtros -->
+<div class="bg-white p-4 rounded-2xl shadow-sm mb-6">
+  <form method="get" class="flex flex-col sm:flex-row items-center gap-3">
+    <div class="w-full sm:w-1/2">
+      <input 
+        type="text" 
+        name="q" 
+        placeholder="Buscar por ID, nota o producto..." 
+        value="{{ request.GET.q }}"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-panaderia"
+      >
+    </div>
+    <div class="w-full sm:w-auto">
+      <select name="estado" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-panaderia">
+        <option value="">Todos los estados</option>
+        <option value="BORRADOR" {% if request.GET.estado == 'BORRADOR' %}selected{% endif %}>Borrador</option>
+        <option value="CONFIRMADA" {% if request.GET.estado == 'CONFIRMADA' %}selected{% endif %}>Confirmada</option>
+      </select>
+    </div>
+    <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-panaderia text-white hover:bg-yellow-500 font-medium">
+      Buscar
+    </button>
+  </form>
+</div>
+
+
+<!-- Vista de Tabla para Escritorio (Oculta en móvil) -->
+<div class="hidden md:block bg-white rounded-2xl shadow-md overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Venta #</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Creado por</th>
+        <th scope="col" class="relative px-6 py-3"><span class="sr-only">Ver</span></th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      {% for v in page_obj %}
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            {{ v.id }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ v.fecha|date:"d M, Y H:i" }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            {% if v.estado == 'CONFIRMADA' %}
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                Confirmada
+              </span>
+            {% else %}
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                Borrador
+              </span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 truncate" style="max-width: 200px;">
+            {{ v.nota|default:"—" }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ v.created_by|default:"Sistema" }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <a href="{% url 'inventario:venta_detail' v.pk %}" class="text-indigo-600 hover:text-indigo-900">Ver Detalles</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" class="px-6 py-12 text-center text-gray-500 italic">No se encontraron ventas con los filtros actuales.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Vista de Tarjetas para Móvil (Oculta en escritorio) -->
+<div class="block md:hidden space-y-4">
+  {% for v in page_obj %}
+  <a href="{% url 'inventario:venta_detail' v.pk %}" class="block bg-white shadow-md rounded-lg p-4 hover:bg-gray-50 transition">
+    <div class="flex justify-between items-center mb-2">
+      <span class="font-bold text-gray-800">Venta #{{ v.id }}</span>
+      {% if v.estado == 'CONFIRMADA' %}
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          Confirmada
+        </span>
+      {% else %}
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+          Borrador
+        </span>
+      {% endif %}
+    </div>
+    <div class="text-sm text-gray-600 space-y-1">
+      <p><strong>Fecha:</strong> {{ v.fecha|date:"d M, Y H:i" }}</p>
+      <p><strong>Nota:</strong> {{ v.nota|default:"—" }}</p>
+      <p><strong>Usuario:</strong> {{ v.created_by|default:"Sistema" }}</p>
+    </div>
+  </a>
+  {% empty %}
+    <div class="bg-white rounded-lg p-6 text-center text-gray-500 italic">
+      No hay ventas para mostrar.
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Paginación -->
+{% if page_obj.has_other_pages %}
+<div class="mt-6 flex items-center justify-between">
+    <div class="flex-1 flex justify-between sm:hidden">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> Anterior </a>
+      {% endif %}
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> Siguiente </a>
+      {% endif %}
+    </div>
+    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm text-gray-700">
+          Mostrando
+          <span class="font-medium">{{ page_obj.start_index }}</span>
+          a
+          <span class="font-medium">{{ page_obj.end_index }}</span>
+          de
+          <span class="font-medium">{{ page_obj.paginator.count }}</span>
+          resultados
+        </p>
+      </div>
+      <div>
+        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            <span class="sr-only">Anterior</span>
+            <!-- Heroicon name: solid/chevron-left -->
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </a>
+          {% endif %}
+          
+          {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+              <a href="#" aria-current="page" class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> {{ num }} </a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <a href="?page={{ num }}" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> {{ num }} </a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            <span class="sr-only">Siguiente</span>
+            <!-- Heroicon name: solid/chevron-right -->
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+          </a>
+          {% endif %}
+        </nav>
+      </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

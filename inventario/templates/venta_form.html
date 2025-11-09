@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-bold mb-3">Nueva venta</h1>
+
+<form method="post" class="space-y-4">
+  {% csrf_token %}
+  <div class="bg-white p-4 rounded-2xl shadow">
+    {{ form.non_field_errors }}
+    <div class="grid grid-cols-1 gap-3">
+      <label class="font-semibold">Nota</label>
+      {{ form.nota }}
+    </div>
+  </div>
+
+  <div class="bg-white p-4 rounded-2xl shadow">
+    <h2 class="font-semibold mb-2">Líneas</h2>
+    {{ formset.management_form }}
+    <table class="w-full">
+      <thead class="bg-gray-100 text-left">
+        <tr><th class="p-2">Producto</th><th class="p-2">Cantidad</th><th class="p-2">Eliminar</th></tr>
+      </thead>
+      <tbody>
+        {% for f in formset.forms %}
+          <tr class="border-t">
+            <td class="p-2">{{ f.producto }}</td>
+            <td class="p-2">{{ f.cantidad }}</td>
+            <td class="p-2">{{ f.DELETE }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex gap-2">
+    <button type="submit" class="px-3 py-2 border rounded-xl">Guardar borrador</button>
+    <button type="submit" name="confirmar" value="1" class="px-3 py-2 border rounded-xl bg-black text-white">
+      Confirmar y descontar
+    </button>
+  </div>
+</form>
+{% endblock %}

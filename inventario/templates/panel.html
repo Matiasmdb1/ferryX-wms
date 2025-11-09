@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block title %}Panel de Control{% endblock %}
+
+{% block content %}
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+  <h1 class="text-3xl font-bold text-gray-800">📊 Panel de Control</h1>
+  <div class="flex flex-wrap gap-2">
+    <a href="{% url 'inventario:op_create' %}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+      + Nueva Producción
+    </a>
+    <a href="{% url 'inventario:mp_ingreso' %}" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition">
+      + Ingresar Stock
+    </a>
+    <a href="{% url 'inventario:venta_create' %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+      + Nueva Venta
+    </a>
+  </div>
+</div>
+
+<form method="get" class="bg-white p-4 rounded-2xl shadow-sm flex flex-wrap items-end gap-3 mb-8">
+  <div>
+    <label class="text-sm font-medium text-gray-600 block mb-1">Desde</label>
+    <input type="date" name="desde" value="{{ desde|date:'Y-m-d' }}" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-panaderia">
+  </div>
+  <div>
+    <label class="text-sm font-medium text-gray-600 block mb-1">Hasta</label>
+    <input type="date" name="hasta" value="{{ hasta|date:'Y-m-d' }}" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-panaderia">
+  </div>
+  <button class="px-4 py-2 rounded-lg bg-panaderia text-white hover:bg-yellow-500 transition-colors font-medium">
+    Aplicar Filtro
+  </button>
+  
+  {% if request.user.suscripcion.plan_actual != 'esencial' %}
+    <a href="{% url 'inventario:panel_csv' %}?desde={{ desde|date:'Y-m-d' }}&hasta={{ hasta|date:'Y-m-d' }}" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors text-sm ml-auto">
+      Exportar CSV
+    </a>
+  {% endif %}
+</form>
+
+<div class="mb-8">
+  <h2 class="text-xl font-bold text-gray-800 mb-4">🚨 Alertas y Acciones Urgentes</h2>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <div class="bg-white rounded-2xl shadow-md border-l-4 border-red-500">
+      <div class="px-5 py-3 border-b flex justify-between items-center">
+        <h3 class="font-semibold text-red-700">⚠️ Materia Prima con Stock Crítico</h3>
+        <a href="{% url 'inventario:mp_ingreso' %}" class="text-sm bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600">+ Ingresar Stock</a>
+      </div>
+      <div class="p-4 overflow-x-auto">
+        <table class="w-full text-sm">
+          <tbody>
+            
+            {% for mp in mp_alertas %}
+            <tr class="border-b last:border-b-0">
+              <td class="py-2 pr-2 font-medium">{{ mp.nombre }}</td>
+              <td class="py-2 px-2 text-center text-gray-600">Mín: {{ mp.stock_minimo_total_fmt }}</td>
+              <td class="py-2 pl-2 text-right font-bold text-red-600">Actual: {{ mp.stock_total_fmt }} {{ mp.unidad.nombre }}</td>
+            </tr>
+            {% empty %}
+            <tr><td class="py-3 text-gray-500 text-center italic">¡Todo bien! No hay alertas de stock.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-md border-l-4 border-orange-500">
+      <div class="px-5 py-3 border-b">
+        <h3 class="font-semibold text-orange-700">⌛ Gestión de Lotes Perecederos</h3>
+      </div>
+      <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <h4 class="font-medium mb-2 text-orange-600">Por Vencer (≤ 1 día)</h4>
+          {% for l in lotes_por_vencer %}
+          <a href="{% url 'inventario:lote_detail' l.pk %}" class="flex justify-between border-b py-2 text-sm hover:bg-orange-50">
+            <span class="underline text-blue-600">{{ l.codigo }} ({{l.producto.nombre}})</span>
+            <span class="font-medium">{{ l.cantidad_disponible_fmt }}</span>
+          </a>
+          {% empty %}
+          <p class="text-sm text-gray-500 italic">No hay lotes por vencer pronto.</p>
+          {% endfor %}
+        </div>
+        <div>
+          <h4 class="font-medium mb-2 text-red-600">Vencidos</h4>
+          {% for l in lotes_vencidos %}
+          <a href="{% url 'inventario:lote_detail' l.pk %}" class="flex justify-between border-b py-2 text-sm hover:bg-red-50">
+            <span class="underline text-blue-600">{{ l.codigo }} ({{l.producto.nombre}})</span>
+            <span class="font-medium">{{ l.cantidad_disponible_fmt }}</span>
+          </a>
+          {% empty %}
+          <p class="text-sm text-gray-500 italic">No hay lotes vencidos con stock.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% if request.user.suscripcion.plan_actual != 'esencial' %}
+  <div class="mb-8">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Resumen del Periodo (Plan Pro)</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="bg-white rounded-2xl shadow-md p-5 flex items-start justify-between">
+        <div>
+          <div class="text-sm text-gray-500">Nº de Ventas</div>
+          <div class="text-3xl font-semibold mt-1">{{ total_ventas }}</div>
+        </div>
+        <div class="bg-blue-100 text-blue-600 p-2 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-5 flex items-start justify-between">
+        <div>
+          <div class="text-sm text-gray-500">Unidades Vendidas</div>
+          <div class="text-3xl font-semibold mt-1">{{ total_unidades_vendidas|floatformat:"-1" }}</div>
+        </div>
+        <div class="bg-green-100 text-green-600 p-2 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-5 flex items-start justify-between">
+        <div>
+          <div class="text-sm text-gray-500">Unidades Producidas</div>
+          <div class="text-3xl font-semibold mt-1">{{ unidades_producidas_hoy|floatformat:"-1" }}</div>
+        </div>
+        <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-5 flex items-start justify-between">
+        <div>
+          <div class="text-sm text-gray-500">Mermas (MP)</div>
+          <div class="text-3xl font-semibold mt-1 text-red-600">{{ total_mermas_mp_hoy|floatformat:"-1" }}</div>
+        </div>
+        <div class="bg-red-100 text-red-600 p-2 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-md">
+      <div class="px-5 py-3 border-b font-semibold text-gray-700">Ventas por Producto</div>
+      <div class="p-5 h-64">
+        <canvas id="chartProd" class="w-full h-full"></canvas>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-md">
+      <div class="px-5 py-3 border-b font-semibold text-gray-700">Mermas de Materia Prima</div>
+      <div class="p-2 overflow-x-auto">
+        <table class="w-full text-sm">
+          <tbody>
+          {% for item in mermas_mp_hoy %}
+            <tr class="border-b last:border-b-0">
+              <td class="py-2 px-3 font-medium">{{ item.mp__nombre }}</td>
+              <td class="py-2 px-3 text-right font-mono">{{ item.total|floatformat:"-1" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td class="py-3 px-3 text-gray-500 italic">Sin mermas.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-md mt-6">
+    <div class="px-5 py-3 border-b font-semibold text-gray-700">📅 Ventas Últimos 7 Días</div>
+    <div class="p-5 h-64">
+      <canvas id="chart7" class="w-full h-full"></canvas>
+    </div>
+  </div>
+
+{% else %}
+  <div class="bg-white p-6 rounded-lg shadow-md mb-6 text-center">
+    <h1 class="text-2xl font-bold text-gray-800">¡Bienvenido, {{ request.user.username }}!</h1>
+    <p class="text-gray-600 mt-2">Tus alertas de stock y lotes por vencer están aquí arriba.</p>
+    <a href="{% url 'inventario:pagina_precios' %}" class="mt-4 inline-block bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
+      ✨ ¡Actualiza a Pro para ver Gráficos de Ventas y KPIs!
+    </a>
+  </div>
+{% endif %}
+{% if request.user.suscripcion.plan_actual != 'esencial' %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const COLORS = ["#4f46e5", "#16a34a", "#dc2626", "#f59e0b"];
+
+    new Chart(document.getElementById('chartProd'), {
+      type: 'bar',
+      data: {
+        labels: {{ chart_prod_labels|safe }},
+        datasets: [{ label: 'Unidades', data: {{ chart_prod_values|safe }}, backgroundColor: COLORS }]
+      },
+      options: { maintainAspectRatio: false, responsive: true }
+    });
+
+    new Chart(document.getElementById('chart7'), {
+      type: 'line',
+      data: {
+        labels: {{ chart_7_labels|safe }},
+        datasets: [{ label: 'Unidades', data: {{ chart_7_values|safe }}, borderColor: COLORS[0], fill: false, tension: 0.2 }]
+      },
+      options: { maintainAspectRatio: false, responsive: true }
+    });
+  </script>
+{% endif %}
+{% endblock %}

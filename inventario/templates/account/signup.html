@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load socialaccount %}
+
+{% block title %}Crear Cuenta{% endblock %}
+{% block content_title %}Crear Cuenta{% endblock %}
+{% block page_title %}Crear Cuenta{% endblock %}
+
+{% block content %}
+    
+    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg p-8 mt-8">
+        
+        <h2 class="text-3xl font-bold text-center text-gray-900">
+            Registrarse en Ferryx
+        </h2>
+        <p class="text-center text-gray-600 mt-2">
+            Para evitar multicuentas y proteger tu cuenta, usamos el registro seguro de Google.
+        </p>
+
+        <div class="mt-8">
+          <a href="{% provider_login_url 'google' %}" 
+             class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-300">
+            <img class="h-6 w-6 mr-3" src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo">
+            Continuar con Google
+          </a>
+        </div>
+        <p class="mt-6 text-center text-sm text-gray-600">
+            ¿Ya tienes cuenta?
+            <a href="{% url 'login' %}" class="font-medium text-tema-principal hover:underline">
+                Ingresa aquí
+            </a>
+        </p>
+
+    </div>
+
+    {% endblock %}

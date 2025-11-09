@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<h1 class="text-xl font-bold mb-4">
+  {% if form.instance.pk %}Editar Receta{% else %}Crear Receta{% endif %}
+</h1>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  <fieldset class="mb-4 border rounded-2xl p-4">
+    <legend class="px-2 text-sm text-gray-600">Datos de la receta</legend>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        {{ form.producto.label_tag }}<br>
+        {{ form.producto }}
+        {% for e in form.producto.errors %}<div class="text-red-600 text-sm">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div>
+        {{ form.nombre.label_tag }}<br>
+        {{ form.nombre }}
+        {% for e in form.nombre.errors %}<div class="text-red-600 text-sm">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div>
+        {{ form.version.label_tag }}<br>
+        {{ form.version }}
+        {% for e in form.version.errors %}<div class="text-red-600 text-sm">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div>
+        {{ form.rendimiento_por_lote.label_tag }}<br>
+        {{ form.rendimiento_por_lote }}
+        {% for e in form.rendimiento_por_lote.errors %}<div class="text-red-600 text-sm">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="col-span-full">
+        {{ form.activo }} {{ form.activo.label_tag }}
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="mb-4 border rounded-2xl p-4">
+    <legend class="px-2 text-sm text-gray-600">Ingredientes (líneas)</legend>
+
+    {{ formset.management_form }}
+
+    <table class="w-full">
+      <thead>
+        <tr class="text-left text-sm text-gray-600">
+          <th class="p-2">MP</th>
+          <th class="p-2">Cantidad</th>
+          <th class="p-2">Unidad</th>
+          <th class="p-2">Eliminar</th>
+        </tr>
+      </thead>
+      <tbody id="lineas-tbody">
+        {% for f in formset.forms %}
+          <tr class="border-t linea-form">
+            <td class="p-2">{{ f.mp }}</td>
+            <td class="p-2" style="max-width:160px">{{ f.cantidad_valor }}</td>
+            <td class="p-2" style="max-width:120px">{{ f.cantidad_unidad }}</td>
+            <td class="p-2">{% if f.instance.pk %}{{ f.DELETE }}{% endif %}</td>
+          </tr>
+          {% for e in f.non_field_errors %}
+            <tr><td colspan="4" class="text-red-600 text-sm p-2">{{ e }}</td></tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="mt-3">
+      <button type="button" id="btn-add-linea"
+              class="px-3 py-2 border rounded-xl hover:bg-gray-50">
+        Agregar ingrediente
+      </button>
+    </div>
+
+    <!-- plantilla vacía del formset -->
+    <template id="empty-form-template">
+      <tr class="border-t linea-form">
+        <td class="p-2">__MP__</td>
+        <td class="p-2" style="max-width:160px">__VAL__</td>
+        <td class="p-2" style="max-width:120px">__UNI__</td>
+        <td class="p-2">__DEL__</td>
+      </tr>
+    </template>
+
+    <div id="empty-form-html" class="hidden">
+      {{ formset.empty_form.mp }}
+      {{ formset.empty_form.cantidad_valor }}
+      {{ formset.empty_form.cantidad_unidad }}
+      {{ formset.empty_form.DELETE }}
+    </div>
+  </fieldset>
+
+  <div class="flex gap-2">
+    <button type="submit" class="px-4 py-2 bg-gray-900 text-white rounded-xl">Guardar</button>
+    <a href="{% url 'inventario:receta_list' %}" class="px-4 py-2 border rounded-xl">Volver</a>
+  </div>
+</form>
+
+<script>
+  // === Unidades por MP, desde la vista ===
+  const MP_UNITS = {{ mp_units_json|safe }};
+
+  function unidadChoicesFor(mpId) {
+    const base = (MP_UNITS[mpId] || "").toLowerCase();
+    if (base === "kg") return [["kg","kg"], ["g","g"]];
+    if (["l","lt","litro","litros"].includes(base)) return [["l","l"], ["ml","ml"]];
+    return [[base || "unidad", base || "unidad"]];
+  }
+
+  function applyUnitChoices(row) {
+    const mpSelect = row.querySelector('select[name$="-mp"]');
+    const unidadSelect = row.querySelector('select[name$="-cantidad_unidad"]');
+    if (!mpSelect || !unidadSelect) return;
+
+    const mpId = mpSelect.value || null;
+    const opts = unidadChoicesFor(mpId);
+    // Limpiar y cargar
+    unidadSelect.innerHTML = "";
+    for (const [v,t] of opts) {
+      const o = document.createElement("option");
+      o.value = v; o.textContent = t;
+      unidadSelect.appendChild(o);
+    }
+  }
+
+  // Inicial: para filas existentes
+  document.querySelectorAll("tr.linea-form").forEach(applyUnitChoices);
+
+  // Al cambiar la MP en una fila, refrescar unidades
+  document.getElementById("lineas-tbody").addEventListener("change", (ev)=>{
+    if (ev.target && ev.target.name && ev.target.name.endsWith("-mp")) {
+      applyUnitChoices(ev.target.closest("tr.linea-form"));
+    }
+  });
+
+  // === Agregar nueva fila sin guardar ===
+  const btnAdd = document.getElementById("btn-add-linea");
+  btnAdd.addEventListener("click", function(){
+    const totalInput = document.getElementById("id_form-TOTAL_FORMS");
+    const index = parseInt(totalInput.value, 10);
+    const emptyHtmlDiv = document.getElementById("empty-form-html");
+
+    // Construimos los widgets vacíos reemplazando __prefix__
+    const mpHtml  = emptyHtmlDiv.children[0].outerHTML.replace(/__prefix__/g, index);
+    const valHtml = emptyHtmlDiv.children[1].outerHTML.replace(/__prefix__/g, index);
+    const uniHtml = emptyHtmlDiv.children[2].outerHTML.replace(/__prefix__/g, index);
+    const delHtml = emptyHtmlDiv.children[3].outerHTML.replace(/__prefix__/g, index);
+
+    const tpl = document.getElementById("empty-form-template").innerHTML
+      .replace("__MP__", mpHtml)
+      .replace("__VAL__", valHtml)
+      .replace("__UNI__", uniHtml)
+      .replace("__DEL__", delHtml);
+
+    const tbody = document.getElementById("lineas-tbody");
+    tbody.insertAdjacentHTML("beforeend", tpl);
+
+    // aumentar contador
+    totalInput.value = index + 1;
+
+    // aplicar unidades segun MP
+    const lastRow = tbody.querySelector("tr.linea-form:last-child");
+    applyUnitChoices(lastRow);
+  });
+</script>
+
+{% endblock %}

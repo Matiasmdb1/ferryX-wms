@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Receta: {{ receta.producto.nombre }} – {{ receta.nombre }} v{{ receta.version }}</h1>
+
+<p><b>Rendimiento por lote:</b> {{ receta.rendimiento_por_lote }} (unidad del producto)</p>
+<p><b>Activa:</b> {{ receta.activo|yesno:"Sí,No" }}</p>
+
+<h3>Ingredientes (por lote)</h3>
+<table border="1" cellpadding="6">
+  <tr>
+    <th>MP</th>
+    <th>Cantidad por lote</th>
+  </tr>
+  {% for ln in receta.lineas.all %}
+  <tr>
+    <td>{{ ln.mp.nombre }}</td>
+    <td>{{ ln.por_lote_fmt }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3>Calculadora de insumos</h3>
+<form method="get">
+  <label>Lotes a producir:</label>
+  <input type="number" step="0.1" name="lotes" value="{{ lotes }}">
+  <button type="submit">Calcular</button>
+</form>
+
+<table border="1" cellpadding="6" style="margin-top:10px">
+  <tr>
+    <th>MP</th>
+    <th>Por lote</th>
+    <th>Total para {{ lotes }} lote(s)</th>
+  </tr>
+  {% for row in preview %}
+  <tr>
+    <td>{{ row.mp.nombre }}</td>
+    <td>{{ row.por_lote }}</td>
+    <td>{{ row.total_fmt }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p style="margin-top:12px">
+  <a href="{% url 'inventario:receta_update' receta.pk %}">Editar esta receta</a> |
+  <a href="{% url 'inventario:receta_list' %}">Volver al listado</a>
+</p>
+{% endblock %}

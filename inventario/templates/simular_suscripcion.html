@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Confirmar Suscripción (Simulación)</h1>
+    
+    <p>Estás a punto de activar el Plan: <strong>{{ plan_nombre }}</strong>.</p>
+    <p><strong>Nota:</strong> Esto es una simulación para el proyecto de título. No se te pedirá ninguna tarjeta de crédito.</p>
+    <br>
+
+    <form method="POST" action="{% url 'inventario:simular_suscripcion' plan_id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-confirmar">Activar Plan Ahora</button>
+        <a href="{% url 'inventario:pagina_precios' %}" class="btn-cancelar">Cancelar</a>
+    </form>
+{% endblock %}

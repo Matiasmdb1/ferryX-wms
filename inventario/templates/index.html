@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    Bienvenido
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-12 mt-10 text-center">
+
+        <h1 class="text-4xl font-bold text-gray-900">
+            Bienvenido a Ferryx
+        </h1>
+
+        <p class="text-xl text-gray-600 mt-4">
+            El mini ERP SaaS que revoluciona la gestión de tu panadería.
+        </p>
+
+        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+            
+            {% if not user.is_authenticated %}
+                <a href="{% url 'inventario:pagina_precios' %}" 
+                   class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 shadow-md">
+                   Ver Planes
+                </a>
+                
+                <a href="{% url 'signup' %}" 
+                   class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg transition duration-300">
+                   Registrarse Gratis
+                </a>
+                
+                <a href="{% url 'login' %}" 
+                   class="inline-block text-gray-600 hover:text-gray-900 font-medium py-3 px-6">
+                   Ya tengo cuenta (Ingresar)
+                </a>
+            
+            {% else %}
+                <a href="{% url 'inventario:panel' %}" 
+                   class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 shadow-md">
+                   Ir a mi Panel de Control
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock %}

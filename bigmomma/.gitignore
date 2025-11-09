@@ -1,0 +1,13 @@
+# Archivos de entorno (si los usas)
+.env
+
+# Base de datos local
+db.sqlite3
+*.sqlite3
+
+# Archivos de Python
+__pycache__/
+*.pyc
+
+# Archivos de VSCode
+.vscode/

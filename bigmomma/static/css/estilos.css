@@ -1,0 +1,381 @@
+/* --- Base --- */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* --- Header --- */
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+/* --- Nav --- */
+.nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav a {
+  color: #334155;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s, border-bottom 0.2s;
+  padding-bottom: 2px;
+}
+
+.nav a:hover {
+  color: #2563eb;
+  border-bottom: 2px solid #2563eb;
+}
+
+/* --- Usuario --- */
+.user {
+  margin-left: 1rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* --- Botón salir --- */
+.logout-form button {
+  margin-left: 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.logout-form button:hover {
+  background: #dc2626;
+}
+
+/* --- Main content --- */
+.content {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+
+/* --- Títulos unificados --- */
+h1.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #0f172a;
+}
+
+/* --- Links de acción (ej. Nueva MP, Nueva OP) --- */
+.action-links a {
+  display: inline-block;
+  margin-right: 0.75rem;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.action-links a:hover {
+  background: #e0f2fe;
+}
+
+/* --- Tablas modernas --- */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+thead {
+  background: #f1f5f9;
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  color: #334155;
+}
+
+tbody tr {
+  border-top: 1px solid #e2e8f0;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+/* --- Vista detalle (ej. lote_detail.html) --- */
+.detail-item {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.detail-item span {
+  font-weight: 600;
+  color: #1e293b;
+  margin-right: 4px;
+}
+
+/* --- Formulario login --- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="number"],
+form select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  width: 100%;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+form input:focus, form select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+  outline: none;
+}
+
+form button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+form button:hover {
+  background: #1d4ed8;
+}
+
+
+/* --- Reset básico --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f9fafb;
+  color: #111827;
+  line-height: 1.5;
+}
+
+/* --- Contenedor global --- */
+main {
+  padding: 2rem;
+}
+
+/* --- Títulos --- */
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+/* --- Links --- */
+a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- Tablas --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background: #f3f4f6;
+  font-weight: 600;
+  color: #374151;
+}
+
+tr:hover {
+  background: #f9fafb;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* --- Formularios --- */
+.form-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.form-input:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+}
+
+/* --- Botones --- */
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: #f9fafb;
+  color: #111827;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, border 0.2s;
+}
+
+.btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* --- Card (login, formularios) --- */
+.card {
+  max-width: 400px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* --- Detail pages --- */
+.detail-item {
+  margin: 0.5rem 0;
+}
+
+.detail-item span {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* --- Estados (status) --- */
+.status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status.ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.warning {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.status.danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* --- Header (base.html) --- */
+header {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header a {
+  margin-right: 1rem;
+}
+
+header a:last-child {
+  margin-right: 0;
+}

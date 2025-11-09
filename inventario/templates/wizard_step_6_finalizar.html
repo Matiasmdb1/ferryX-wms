@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración Completada{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8 text-center">
+  
+  <div class="mb-4">
+    <svg class="mx-auto h-16 w-16 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+  </div>
+
+  <h1 class="text-3xl font-bold text-gray-900">
+    ¡Configuración Completada!
+  </h1>
+  
+  <p class="text-lg text-gray-600 mt-4">
+    ¡Excelente! Has terminado la configuración inicial de Ferryx.
+  </p>
+  <p class="text-lg text-gray-600 mt-2">
+    Ahora puedes acceder a tu panel de control principal (Dashboard) y empezar a crear Órdenes de Producción y registrar Ventas.
+  </p>
+
+  <div class="mt-8">
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" 
+         class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 shadow-md">
+         Ir a mi Panel de Control &raquo;
+      </button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

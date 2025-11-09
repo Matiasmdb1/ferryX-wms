@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 border border-gray-100 mt-6">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">
+    🏷️ Lote <span class="text-panaderia">{{ lote.codigo }}</span>
+  </h1>
+
+  <div class="space-y-3 text-gray-700">
+    <p><span class="font-semibold text-gray-900">Producto:</span> {{ lote.producto }}</p>
+    <p><span class="font-semibold text-gray-900">Fecha de producción:</span> {{ lote.fecha_produccion|date:"d-m-Y H:i" }}</p>
+    <p><span class="font-semibold text-gray-900">Fecha de vencimiento:</span> {{ lote.fecha_vencimiento|date:"d-m-Y" }}</p>
+    <p>
+      <span class="font-semibold text-gray-900">Días restantes:</span>
+      {% if lote.dias_restantes < 0 %}
+        <span class="text-red-600 font-medium">Vencido ({{ lote.dias_restantes }})</span>
+      {% elif lote.dias_restantes <= 1 %}
+        <span class="text-orange-500 font-medium">Por rallar ({{ lote.dias_restantes }})</span>
+      {% else %}
+        <span class="text-green-600 font-medium">{{ lote.dias_restantes }} día{{ lote.dias_restantes|pluralize }}</span>
+      {% endif %}
+    </p>
+    <p>
+      <span class="font-semibold text-gray-900">Disponible:</span>
+      <span class="font-mono">{{ lote.cantidad_disponible_fmt }}</span> /
+      <span class="text-gray-500">{{ lote.cantidad_inicial_fmt }}</span>
+    </p>
+    <p>
+      <span class="font-semibold text-gray-900">Estado:</span>
+      {% if lote.estado == "VENCIDO" %}
+        <span class="text-red-600 font-semibold">Vencido</span>
+      {% elif lote.estado == "RALLAR" %}
+        <span class="text-orange-600 font-semibold">Por pan rallado</span>
+      {% else %}
+        <span class="text-green-600 font-semibold">OK</span>
+      {% endif %}
+    </p>
+
+```
+{% if lote.op_id %}
+  <p>
+    <span class="font-semibold text-gray-900">Orden de producción origen:</span>
+    <a href="{% url 'inventario:op_detail' lote.op_id %}"
+       class="text-panaderia hover:text-yellow-500 underline font-medium transition">
+       OP {{ lote.op_id }}
+    </a>
+  </p>
+{% endif %}
+```
+
+  </div>
+
+  <div class="mt-8 flex justify-end">
+    <a href="{% url 'inventario:lote_list' %}"
+       class="px-5 py-2 bg-panaderia text-white font-semibold rounded-xl hover:bg-yellow-500 transition">
+      ← Volver a Lotes
+    </a>
+  </div>
+</div>
+
+{% endblock %}
