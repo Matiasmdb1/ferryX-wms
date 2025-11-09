@@ -1,0 +1,18 @@
+# render.yaml
+
+# Esta configuración es opcional pero ayuda a Render a ser más eficiente.
+# Le dice qué versión de Python usar.
+
+services:
+  - type: web
+    name: ferryx-wms
+    env: python
+    # Aseguramos el uso de una versión compatible con las últimas dependencias.
+    pythonVersion: 3.12.x 
+    buildCommand: pip install -r requirements.txt && python manage.py migrate
+    startCommand: gunicorn bigmomma.wsgi
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: ferryx-db
+      - key: SECRET_KEY
+        generateValue: true
